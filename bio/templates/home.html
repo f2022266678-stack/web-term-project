@@ -1,0 +1,281 @@
+{% load static %}
+{% load portfolio_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - {% if bio %}{{ bio.name }}{% else %}My Portfolio{% endif %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .progress-bar {
+            transition: width 1s ease-in-out;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header Section -->
+    <header class="gradient-bg text-white py-20">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
+                {% if bio %}
+                    {% if bio.profile_picture %}
+                    <div class="flex-shrink-0">
+                        <img src="{{ bio.profile_picture.url }}" alt="{{ bio.name }}" 
+                             class="w-48 h-48 md:w-64 md:h-64 rounded-full border-4 border-white shadow-2xl object-cover">
+                    </div>
+                    {% endif %}
+                    <div class="text-center md:text-left animate-fade-in">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">{{ bio.name }}</h1>
+                        <h2 class="text-xl md:text-2xl lg:text-3xl mb-6 text-purple-100">{{ bio.job_title }}</h2>
+                        <p class="text-lg md:text-xl text-purple-50 max-w-2xl leading-relaxed">{{ bio.professional_description }}</p>
+                    </div>
+                {% else %}
+                    <div class="text-center animate-fade-in">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">My Portfolio</h1>
+                        <p class="text-lg md:text-xl text-purple-50">Welcome to my portfolio website.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Education Section -->
+        {% if education %}
+        <section class="mb-16 animate-fade-in">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold gradient-text mb-4">
+                    <i class="fas fa-graduation-cap mr-3"></i>Education
+                </h2>
+                <div class="w-24 h-1 gradient-bg mx-auto rounded"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% for edu in education %}
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover border-l-4 border-purple-600">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">{{ edu.degree_title }}</h3>
+                            <p class="text-lg text-purple-600 font-semibold">{{ edu.institution }}</p>
+                        </div>
+                        <div class="bg-purple-100 rounded-full p-3">
+                            <i class="fas fa-university text-purple-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-3">
+                        <i class="far fa-calendar-alt mr-2 text-purple-500"></i>
+                        {{ edu.start_date|date:"F Y" }} - 
+                        {% if edu.end_date %}
+                            {{ edu.end_date|date:"F Y" }}
+                        {% else %}
+                            <span class="text-green-600 font-semibold">Present</span>
+                        {% endif %}
+                    </p>
+                    <p class="text-gray-700 leading-relaxed">{{ edu.description }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Skills Section -->
+        {% if skills %}
+        <section class="mb-16 animate-fade-in">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold gradient-text mb-4">
+                    <i class="fas fa-code mr-3"></i>Skills
+                </h2>
+                <div class="w-24 h-1 gradient-bg mx-auto rounded"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for skill in skills %}
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold text-gray-800">{{ skill.name }}</h3>
+                        <span class="px-3 py-1 rounded-full text-sm font-semibold 
+                            {% if skill.category == 'Technical' %}bg-blue-100 text-blue-800{% else %}bg-green-100 text-green-800{% endif %}">
+                            {{ skill.category }}
+                        </span>
+                    </div>
+                    <div class="mb-2">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-sm text-gray-600">Proficiency</span>
+                            <span class="text-sm font-bold text-purple-600">{{ skill.proficiency }}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                            <div class="progress-bar gradient-bg h-3 rounded-full" style="width: {{ skill.proficiency }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Experience Section -->
+        {% if experience %}
+        <section class="mb-16 animate-fade-in">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold gradient-text mb-4">
+                    <i class="fas fa-briefcase mr-3"></i>Experience
+                </h2>
+                <div class="w-24 h-1 gradient-bg mx-auto rounded"></div>
+            </div>
+            <div class="space-y-6">
+                {% for exp in experience %}
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover border-l-4 
+                    {% if exp.is_current %}border-green-500{% else %}border-purple-600{% endif %}">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-2">
+                                <h3 class="text-2xl font-bold text-gray-800">{{ exp.role }}</h3>
+                                {% if exp.is_current %}
+                                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
+                                    <i class="fas fa-circle text-xs mr-1"></i>Current
+                                </span>
+                                {% endif %}
+                            </div>
+                            <p class="text-lg text-purple-600 font-semibold mb-2">
+                                <i class="fas fa-building mr-2"></i>{{ exp.company_or_institution }}
+                            </p>
+                            <p class="text-gray-600">
+                                <i class="far fa-calendar-alt mr-2 text-purple-500"></i>
+                                {{ exp.start_date|date:"F Y" }} - 
+                                {% if exp.end_date %}
+                                    {{ exp.end_date|date:"F Y" }}
+                                {% elif exp.is_current %}
+                                    <span class="text-green-600 font-semibold">Present</span>
+                                {% else %}
+                                    <span class="text-green-600 font-semibold">Present</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="mt-4 md:mt-0 md:ml-6">
+                            <div class="bg-purple-100 rounded-full p-4">
+                                <i class="fas fa-briefcase text-purple-600 text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 leading-relaxed mt-4">{{ exp.description }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Projects Section -->
+        {% if projects %}
+        <section class="mb-16 animate-fade-in">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold gradient-text mb-4">
+                    <i class="fas fa-project-diagram mr-3"></i>Projects
+                </h2>
+                <div class="w-24 h-1 gradient-bg mx-auto rounded"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for proj in projects %}
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+                    {% if proj.image %}
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="{{ proj.image.url }}" alt="{{ proj.title }}" 
+                             class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                    </div>
+                    {% endif %}
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-3">{{ proj.title }}</h3>
+                        <p class="text-gray-700 mb-4 leading-relaxed">{{ proj.description }}</p>
+                        {% if proj.technology_used %}
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            {% for tech in proj.technology_used|split:"," %}
+                            <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-semibold">
+                                {{ tech }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        {% if proj.link %}
+                        <a href="{{ proj.link }}" target="_blank" 
+                           class="inline-flex items-center gap-2 px-4 py-2 gradient-bg text-white rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                            <span>View Project</span>
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="gradient-bg text-white py-8 mt-16">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-purple-100">
+                <i class="far fa-copyright mr-2"></i>
+                {% if bio %}{{ bio.name }}{% else %}Portfolio{% endif %} - 
+                <span id="current-year"></span>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Set current year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Animate progress bars on scroll
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const progressBar = entry.target.querySelector('.progress-bar');
+                    if (progressBar) {
+                        const width = progressBar.style.width;
+                        progressBar.style.width = '0%';
+                        setTimeout(() => {
+                            progressBar.style.width = width;
+                        }, 100);
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card-hover').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
